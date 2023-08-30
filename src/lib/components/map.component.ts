@@ -98,7 +98,7 @@ export default /*#__PURE__*/ defineComponent({
 		'map:zoomstart', 'map:zoom', 'map:zoomend', 'map:rotatestart', 'map:rotate', 'map:rotateend', 'map:dragstart', 'map:drag', 'map:dragend',
 		'map:pitchstart', 'map:pitch', 'map:pitchend', 'map:wheel'
 	],
-	slots: Object as SlotsType<{ default: {} }>,
+	slots: Object as SlotsType<{ default: {}, mapOverlayElements: {} }>,
 	setup(props, ctx) {
 
 		const component      = markRaw(getCurrentInstance()!),
@@ -316,7 +316,11 @@ export default /*#__PURE__*/ defineComponent({
 				style  : { height: props.height, width: props.width }
 			},
 			[
-				h('div', { ref: container, 'class': 'mgl-wrapper' }),
+				h(
+					'div',
+					{ ref: container, 'class': 'mgl-wrapper' },
+					[isInitialized && ctx.slots.mapOverlayElements ? ctx.slots.mapOverlayElements({}) : undefined]
+				),
 				isInitialized.value && ctx.slots.default ? ctx.slots.default({}) : undefined
 			]
 		);
