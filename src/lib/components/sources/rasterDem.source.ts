@@ -15,7 +15,11 @@ const sourceOpts = AllSourceOptions<RasterDEMSourceSpecification>({
 	tileSize   : undefined,
 	attribution: undefined,
 	encoding   : undefined,
-	volatile   : undefined
+	volatile   : undefined,
+	redFactor  : undefined,
+	blueFactor : undefined,
+	greenFactor: undefined,
+	baseShift  : undefined
 });
 
 
