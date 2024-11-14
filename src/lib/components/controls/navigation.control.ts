@@ -1,5 +1,5 @@
-import { defineComponent, inject, onBeforeUnmount, PropType, toRef } from 'vue';
-import { Position, PositionProp, PositionValues } from '@/lib/components/controls/position.enum';
+import { defineComponent, inject, onBeforeUnmount, type PropType } from 'vue';
+import { Position, type PositionProp, PositionValues } from '@/lib/components/controls/position.enum';
 import { isInitializedSymbol, mapSymbol } from '@/lib/types';
 import { NavigationControl } from 'maplibre-gl';
 import { usePositionWatcher } from '@/lib/composable/usePositionWatcher';
@@ -24,7 +24,7 @@ export default /*#__PURE__*/ defineComponent({
 			  isInitialized = inject(isInitializedSymbol)!,
 			  control       = new NavigationControl({ showCompass: props.showCompass, showZoom: props.showZoom, visualizePitch: props.visualizePitch });
 
-		usePositionWatcher(toRef(props, 'position'), map, control);
+		usePositionWatcher(() => props.position, map, control);
 		onBeforeUnmount(() => isInitialized.value && map.value?.removeControl(control));
 
 	},

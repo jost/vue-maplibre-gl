@@ -25,9 +25,9 @@
 
 				<mgl-marker :coordinates="markerCoordinates" color="#cc0000" :scale="0.5"/>
 
-				<mgl-geo-json-source source-id="geojson" :data="geoJsonSource.data">
+				<mgl-geo-json-source source-id="geojson" :data="geojsonSource.data as any">
 					<mgl-line-layer
-						v-if="geoJsonSource.show"
+						v-if="geojsonSource.show"
 						layer-id="geojson"
 						:layout="layout"
 						:paint="paint"
@@ -41,7 +41,7 @@
 
 			</mgl-map>
 		</div>
-		<div style="margin-bottom: 20px">Version: {{ mapVersion}}</div>
+		<div style="margin-bottom: 20px">Version: {{ mapVersion }}</div>
 		Loaded Count: {{ loaded }}<br>
 		Is Zooming: {{ isZooming }}<br>
 		<div>
@@ -85,7 +85,7 @@
 </template>
 
 <script lang="ts">
-	import { defineComponent, ref, toRef, watch } from 'vue';
+	import { defineComponent, onMounted, ref, watch } from 'vue';
 	import { MglDefaults, MglEvent, Position, StyleSwitchItem, useMap, ValidLanguages } from '@/lib/main';
 	import { mdiCursorDefaultClick } from '@mdi/js';
 	import { CircleLayerSpecification, LineLayerSpecification, LngLatLike, MapLayerMouseEvent } from 'maplibre-gl';
@@ -102,12 +102,36 @@
 	import MglMarker from '@/lib/components/marker.component';
 	import MglGeoJsonSource from '@/lib/components/sources/geojson.source';
 	import MglLineLayer from '@/lib/components/layers/line.layer';
-	import { FeatureCollection } from 'geojson';
+	import { FeatureCollection, LineString } from 'geojson';
 	import MglVectorSource from '@/lib/components/sources/vector.source';
 	import MglCircleLayer from '@/lib/components/layers/circle.layer';
 
 	MglDefaults.style = 'https://api.maptiler.com/maps/streets/style.json?key=cQX2iET1gmOW38bedbUh';
 	console.log('MglDefaults', MglDefaults);
+
+	const lineString = [
+		[ -122.483696, 37.833818 ],
+		[ -122.483482, 37.833174 ],
+		[ -122.483396, 37.8327 ],
+		[ -122.483568, 37.832056 ],
+		[ -122.48404, 37.831141 ],
+		[ -122.48404, 37.830497 ],
+		[ -122.483482, 37.82992 ],
+		[ -122.483568, 37.829548 ],
+		[ -122.48507, 37.829446 ],
+		[ -122.4861, 37.828802 ],
+		[ -122.486958, 37.82931 ],
+		[ -122.487001, 37.830802 ],
+		[ -122.487516, 37.831683 ],
+		[ -122.488031, 37.832158 ],
+		[ -122.488889, 37.832971 ],
+		[ -122.489876, 37.832632 ],
+		[ -122.490434, 37.832937 ],
+		[ -122.49125, 37.832429 ],
+		[ -122.491636, 37.832564 ],
+		[ -122.492237, 37.833378 ],
+		[ -122.493782, 37.833683 ]
+	];
 
 	export default defineComponent({
 		name      : 'App',
@@ -122,9 +146,8 @@
 				  showCustomControl = ref(true),
 				  loaded            = ref(0),
 				  markerCoordinates = ref<LngLatLike>([ 13.377507, 52.516267 ]),
-				  geoJsonSource     = ref({
-					  show: true,
-					  data: <FeatureCollection>{
+				  geojsonSource     = {
+					  data: ref<FeatureCollection<LineString>>({
 						  type    : 'FeatureCollection',
 						  features: [
 							  {
@@ -134,40 +157,58 @@
 									  type       : 'LineString',
 									  coordinates: [
 										  [ -122.483696, 37.833818 ],
-										  [ -122.483482, 37.833174 ],
-										  [ -122.483396, 37.8327 ],
-										  [ -122.483568, 37.832056 ],
-										  [ -122.48404, 37.831141 ],
-										  [ -122.48404, 37.830497 ],
-										  [ -122.483482, 37.82992 ],
-										  [ -122.483568, 37.829548 ],
-										  [ -122.48507, 37.829446 ],
-										  [ -122.4861, 37.828802 ],
-										  [ -122.486958, 37.82931 ],
-										  [ -122.487001, 37.830802 ],
-										  [ -122.487516, 37.831683 ],
-										  [ -122.488031, 37.832158 ],
-										  [ -122.488889, 37.832971 ],
-										  [ -122.489876, 37.832632 ],
-										  [ -122.490434, 37.832937 ],
-										  [ -122.49125, 37.832429 ],
-										  [ -122.491636, 37.832564 ],
-										  [ -122.492237, 37.833378 ],
-										  [ -122.493782, 37.833683 ]
+										  [ -122.483482, 37.833174 ]
 									  ]
 								  }
 							  }
 						  ]
-					  }
-				  });
+					  }),
+					  show: ref(true)
+				  };
 
-			watch(toRef(map, 'isLoaded'), () => (console.log('IS LOADED', map)), { immediate: true });
-			watch(toRef(map, 'isMounted'), (v: boolean) => (console.log('IS MOUNTED', v)), { immediate: true });
+			watch(() => map.isLoaded, () => (console.log('IS LOADED', map)), { immediate: true });
+			watch(() => map.isMounted, (v: boolean) => (console.log('IS MOUNTED', v)), { immediate: true });
 
-			// onMounted(() => {
-			// 	setTimeout(() => (markerCoordinates.value = [ 13.377507, 42.516267 ]), 5000);
-			// 	setInterval(() => (geoJsonSource.value.show = !geoJsonSource.value.show), 1000);
-			// });
+			onMounted(() => {
+				setTimeout(() => (markerCoordinates.value = [ 13.377507, 42.516267 ]), 5000);
+				setInterval(() => {
+					if (geojsonSource.data.value.features[ 0 ].geometry.coordinates.length >= lineString.length) {
+						geojsonSource.data.value = <FeatureCollection<LineString>>{
+							type    : 'FeatureCollection',
+							features: [
+								{
+									type      : 'Feature',
+									properties: {},
+									geometry  : {
+										type       : 'LineString',
+										coordinates: [
+											[ -122.483696, 37.833818 ],
+											[ -122.483482, 37.833174 ]
+										]
+									}
+								}
+							]
+						};
+					} else {
+						geojsonSource.data.value = <FeatureCollection<LineString>>{
+							type    : 'FeatureCollection',
+							features: [
+								{
+									type      : 'Feature',
+									properties: {},
+									geometry  : {
+										type       : 'LineString',
+										coordinates: [
+											...geojsonSource.data.value.features[ 0 ].geometry.coordinates,
+											lineString[ geojsonSource.data.value.features[ 0 ].geometry.coordinates.length ]
+										]
+									}
+								}
+							]
+						};
+					}
+				}, 1000);
+			});
 
 			function onLoad(e: MglEvent) {
 				loaded.value++;
@@ -185,7 +226,8 @@
 			}
 
 			return {
-				showCustomControl, loaded, map, mapVersion, markerCoordinates, geoJsonSource, onLoad, onMouseenter, setLanguage,
+				showCustomControl, loaded, map, mapVersion, markerCoordinates, geojsonSource, onLoad, onMouseenter, setLanguage,
+				geojsonSourceData         : geojsonSource.data,
 				isZooming                 : ref(false),
 				controlPosition           : ref(Position.TOP_LEFT),
 				showMap                   : ref(true),

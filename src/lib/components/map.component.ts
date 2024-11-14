@@ -6,26 +6,34 @@ import {
 	nextTick,
 	onBeforeUnmount,
 	onMounted,
-	PropType,
+	type PropType,
 	provide,
 	ref,
 	shallowRef,
-	SlotsType,
-	toRef,
+	type SlotsType,
 	unref,
 	watch
 } from 'vue';
 import {
-	FitBoundsOptions,
-	GestureOptions,
-	LngLatBoundsLike,
-	LngLatLike,
+	type FitBoundsOptions,
+	type GestureOptions,
+	type LngLatBoundsLike,
+	type LngLatLike,
 	Map as MaplibreMap,
-	MapOptions,
-	RequestTransformFunction,
-	StyleSpecification
+	type MapOptions,
+	type RequestTransformFunction,
+	type StyleSpecification
 } from 'maplibre-gl';
-import { componentIdSymbol, emitterSymbol, isInitializedSymbol, isLoadedSymbol, mapSymbol, MglEvents, sourceIdSymbol, ValidLanguages } from '@/lib/types';
+import {
+	componentIdSymbol,
+	emitterSymbol,
+	isInitializedSymbol,
+	isLoadedSymbol,
+	mapSymbol,
+	type MglEvents,
+	sourceIdSymbol,
+	type ValidLanguages
+} from '@/lib/types';
 import { defaults } from '@/lib/defaults';
 import { MapLib } from '@/lib/lib/map.lib';
 import { Position } from '@/lib/components/controls/position.enum';
@@ -123,83 +131,83 @@ export default /*#__PURE__*/ defineComponent({
 		/*
 		 * bind prop watchers
 		 */
-		watch(toRef(props, 'bearing'), v => {
+		watch(() => props.bearing, v => {
 			if (v) {
 				map.value?.setBearing(v);
 			}
 		});
-		watch(toRef(props, 'bounds'), v => {
+		watch(() => props.bounds, v => {
 			if (v) {
 				map.value?.fitBounds(v, props.fitBoundsOptions);
 			}
 		});
-		watch(toRef(props, 'center'), v => {
+		watch(() => props.center, v => {
 			if (v) {
 				map.value?.setCenter(v);
 			}
 		});
-		watch(toRef(props, 'maxBounds'), v => {
+		watch(() => props.maxBounds, v => {
 			if (v) {
 				map.value?.setMaxBounds(v);
 			}
 		});
-		watch(toRef(props, 'maxPitch'), v => {
+		watch(() => props.maxPitch, v => {
 			if (v) {
 				map.value?.setMaxPitch(v);
 			}
 		});
-		watch(toRef(props, 'maxZoom'), v => {
+		watch(() => props.maxZoom, v => {
 			if (v) {
 				map.value?.setMaxZoom(v);
 			}
 		});
-		watch(toRef(props, 'minPitch'), v => {
+		watch(() => props.minPitch, v => {
 			if (v) {
 				map.value?.setMinPitch(v);
 			}
 		});
-		watch(toRef(props, 'minZoom'), v => {
+		watch(() => props.minZoom, v => {
 			if (v) {
 				map.value?.setMinZoom(v);
 			}
 		});
-		watch(toRef(props, 'pitch'), v => {
+		watch(() => props.pitch, v => {
 			if (v) {
 				map.value?.setPitch(v);
 			}
 		});
-		watch(toRef(props, 'renderWorldCopies'), v => {
+		watch(() => props.renderWorldCopies, v => {
 			if (v) {
 				map.value?.setRenderWorldCopies(v);
 			}
 		});
-		watch(toRef(props, 'mapStyle'), v => {
+		watch(() => props.mapStyle, v => {
 			if (v) {
 				map.value?.setStyle(v as StyleSpecification);
 			}
 		});
-		watch(toRef(props, 'transformRequest'), v => {
+		watch(() => props.transformRequest, v => {
 			if (v) {
 				map.value?.setTransformRequest(v);
 			}
 		});
-		watch(toRef(props, 'zoom'), v => {
+		watch(() => props.zoom, v => {
 			if (v) {
 				map.value?.setZoom(v);
 			}
 		});
-		watch(toRef(props, 'zoom'), v => {
+		watch(() => props.zoom, v => {
 			if (v) {
 				map.value?.setZoom(v);
 			}
 		});
-		watch(toRef(props, 'language'), v => {
+		watch(() => props.language, v => {
 			if (isStyleReady.value && map.value && registryItem.language !== (v || null)) {
 				setPrimaryLanguage(map.value as any, v || '');
 				registryItem.language = v || null;
 			}
 		});
-		watch(toRef(registryItem, 'language'), v => {
+		watch(() => registryItem.language, v => {
 			if (isStyleReady.value && map.value) {
 				setPrimaryLanguage(map.value as any, v || '');
 			}

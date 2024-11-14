@@ -1,10 +1,9 @@
-import { createCommentVNode, defineComponent, inject, PropType, provide } from 'vue';
+import { createCommentVNode, defineComponent, inject, type PropType, provide, type SlotsType } from 'vue';
 import { AllSourceOptions, componentIdSymbol, sourceIdSymbol, sourceLayerRegistry } from '@/lib/types';
-import { RasterDEMSourceSpecification, RasterDEMTileSource } from 'maplibre-gl';
+import type { RasterDEMSourceSpecification, RasterDEMTileSource } from 'maplibre-gl';
 import { SourceLayerRegistry } from '@/lib/lib/sourceLayer.registry';
 import { SourceLib } from '@/lib/lib/source.lib';
 import { useSource } from '@/lib/composable/useSource';
-import { SlotsType } from 'vue/dist/vue';
 
 const sourceOpts = AllSourceOptions<RasterDEMSourceSpecification>({
 	url        : undefined,
@@ -38,7 +37,12 @@ export default /*#__PURE__*/ defineComponent({
 		tileSize   : Number as PropType<number>,
 		attribution: String as PropType<string>,
 		encoding   : String as PropType<'terrarium' | 'mapbox'>,
-		volatile   : Boolean
+		volatile   : Boolean,
+		redFactor  : Number as PropType<number>,
+		blueFactor : Number as PropType<number>,
+		greenFactor: Number as PropType<number>,
+		baseShift  : Number as PropType<number>
+
 	},
 	slots: Object as SlotsType<{ default: {} }>,
 	setup(props, { slots }) {

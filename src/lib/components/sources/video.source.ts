@@ -1,10 +1,9 @@
-import { createCommentVNode, defineComponent, inject, PropType, provide, toRef, watch } from 'vue';
+import { createCommentVNode, defineComponent, inject, isRef, type PropType, provide, type SlotsType, watch } from 'vue';
 import { AllSourceOptions, componentIdSymbol, sourceIdSymbol, sourceLayerRegistry } from '@/lib/types';
-import { Coordinates, VideoSource, VideoSourceSpecification } from 'maplibre-gl';
+import type { Coordinates, VideoSource, VideoSourceSpecification } from 'maplibre-gl';
 import { SourceLayerRegistry } from '@/lib/lib/sourceLayer.registry';
 import { SourceLib } from '@/lib/lib/source.lib';
 import { useSource } from '@/lib/composable/useSource';
-import { SlotsType } from 'vue/dist/vue';
 
 const sourceOpts = AllSourceOptions<VideoSourceSpecification>({
 	urls       : undefined,
@@ -33,11 +32,9 @@ export default /*#__PURE__*/ defineComponent({
 
 		useSource<VideoSourceSpecification>(source, props, 'video', sourceOpts, registry);
 
-		watch(toRef(props, 'coordinates'), v => {
-			if (v) {
-				source.value?.setCoordinates(v);
-			}
-		});
+		watch(isRef(props.coordinates) ? props.coordinates : () => props.coordinates, v => {
+			source.value?.setCoordinates(v as Coordinates);
+		}, { immediate: true });
 
 		return () => [
 			createCommentVNode('Video Source'),

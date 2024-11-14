@@ -1,6 +1,6 @@
-import { createCommentVNode, defineComponent, h, inject, nextTick, onBeforeUnmount, PropType, ref, Ref, SlotsType, Teleport, toRef, watch } from 'vue';
-import { Position, PositionProp, PositionValues } from '@/lib/components/controls/position.enum';
-import { ControlPosition, IControl } from 'maplibre-gl';
+import { createCommentVNode, defineComponent, h, inject, nextTick, onBeforeUnmount, type PropType, ref, Ref, type SlotsType, Teleport, watch } from 'vue';
+import { Position, type PositionProp, PositionValues } from '@/lib/components/controls/position.enum';
+import type { ControlPosition, IControl } from 'maplibre-gl';
 import { isInitializedSymbol, mapSymbol } from '@/lib/types';
 import { usePositionWatcher } from '@/lib/composable/usePositionWatcher';
 
@@ -65,8 +65,8 @@ export default /*#__PURE__*/ defineComponent({
 			  isAdded       = ref(false),
 			  control       = new CustomControl(isAdded, props.noClasses!);
 
-		usePositionWatcher(toRef(props, 'position'), map, control);
-		watch(toRef(props, 'noClasses'), v => control.setClasses(v!));
+		usePositionWatcher(() => props.position, map, control);
+		watch(() => props.noClasses, v => control.setClasses(v!));
 		onBeforeUnmount(() => isInitialized.value && map.value?.removeControl(control));
 
 		return () => {

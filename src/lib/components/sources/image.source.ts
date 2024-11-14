@@ -1,10 +1,9 @@
-import { createCommentVNode, defineComponent, inject, PropType, provide, toRef, watch } from 'vue';
+import { createCommentVNode, defineComponent, inject, isRef, type PropType, provide, type SlotsType, watch } from 'vue';
 import { AllSourceOptions, componentIdSymbol, sourceIdSymbol, sourceLayerRegistry } from '@/lib/types';
-import { Coordinates, ImageSource, ImageSourceSpecification } from 'maplibre-gl';
+import type { Coordinates, ImageSource, ImageSourceSpecification } from 'maplibre-gl';
 import { SourceLayerRegistry } from '@/lib/lib/sourceLayer.registry';
 import { SourceLib } from '@/lib/lib/source.lib';
 import { useSource } from '@/lib/composable/useSource';
-import { SlotsType } from 'vue/dist/vue';
 
 const sourceOpts = AllSourceOptions<ImageSourceSpecification>({
 	url        : undefined,
@@ -33,11 +32,9 @@ export default /*#__PURE__*/ defineComponent({
 
 		useSource<ImageSourceSpecification>(source, props, 'image', sourceOpts, registry);
 
-		watch(toRef(props, 'coordinates'), v => {
-			if (v) {
-				source.value?.setCoordinates(v);
-			}
-		});
+		watch(isRef(props.coordinates) ? props.coordinates : () => props.coordinates, v => {
+			source.value?.setCoordinates(v as Coordinates);
+		}, { immediate: true });
 
 		return () => [
 			createCommentVNode('Image Source'),

@@ -1,10 +1,9 @@
-import { createCommentVNode, defineComponent, inject, PropType, provide, toRef, watch } from 'vue';
+import { createCommentVNode, defineComponent, inject, isRef, type PropType, provide, type SlotsType, watch } from 'vue';
 import { AllSourceOptions, componentIdSymbol, sourceIdSymbol, sourceLayerRegistry } from '@/lib/types';
-import { CanvasSource, CanvasSourceSpecification, Coordinates } from 'maplibre-gl';
+import type { CanvasSource, CanvasSourceSpecification, Coordinates } from 'maplibre-gl';
 import { SourceLayerRegistry } from '@/lib/lib/sourceLayer.registry';
 import { SourceLib } from '@/lib/lib/source.lib';
 import { useSource } from '@/lib/composable/useSource';
-import { SlotsType } from 'vue/dist/vue';
 
 const sourceOpts = AllSourceOptions<CanvasSourceSpecification>({
 	animate    : undefined,
@@ -35,11 +34,9 @@ export default /*#__PURE__*/ defineComponent({
 
 		useSource<CanvasSourceSpecification>(source, props, 'canvas', sourceOpts, registry);
 
-		watch(toRef(props, 'coordinates'), v => {
-			if (v) {
-				source.value?.setCoordinates(v);
-			}
-		});
+		watch(isRef(props.coordinates) ? props.coordinates : () => props.coordinates, v => {
+			source.value?.setCoordinates(v as Coordinates);
+		}, { immediate: true });
 
 		return () => [
 			createCommentVNode('Canvas Source'),

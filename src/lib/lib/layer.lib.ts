@@ -1,4 +1,4 @@
-import {
+import type {
 	BackgroundLayerSpecification,
 	CircleLayerSpecification,
 	FillExtrusionLayerSpecification,
@@ -13,7 +13,7 @@ import {
 	Source,
 	SymbolLayerSpecification
 } from 'maplibre-gl';
-import { PropType, unref, VNode } from 'vue';
+import { type PropType, unref, type VNode } from 'vue';
 
 export class LayerLib {
 
@@ -36,7 +36,6 @@ export class LayerLib {
 			},
 			source     : [ String, Object ] as PropType<string | Source>,
 			metadata   : [ Object, Array, String, Number ] as PropType<any>,
-			ref        : String as PropType<string>,
 			sourceLayer: String as PropType<string>,
 			minzoom    : Number as PropType<number>,
 			maxzoom    : Number as PropType<number>,

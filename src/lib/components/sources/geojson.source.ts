@@ -1,6 +1,6 @@
-import { createCommentVNode, defineComponent, inject, PropType, provide, SlotsType, toRef, watch } from 'vue';
+import { createCommentVNode, defineComponent, inject, isRef, type PropType, provide, type SlotsType, watch } from 'vue';
 import { AllSourceOptions, componentIdSymbol, sourceIdSymbol, sourceLayerRegistry } from '@/lib/types';
-import { GeoJSONSource, GeoJSONSourceOptions, GeoJSONSourceSpecification, PromoteIdSpecification } from 'maplibre-gl';
+import type { GeoJSONSource, GeoJSONSourceOptions, GeoJSONSourceSpecification, PromoteIdSpecification } from 'maplibre-gl';
 import { SourceLayerRegistry } from '@/lib/lib/sourceLayer.registry';
 import type GeoJSON from 'geojson';
 import { SourceLib } from '@/lib/lib/source.lib';
@@ -23,6 +23,8 @@ const sourceOpts = AllSourceOptions<GeoJSONSourceSpecification>({
 	filter           : undefined,
 });
 
+type DataType = GeoJSON.Feature<GeoJSON.Geometry> | GeoJSON.FeatureCollection<GeoJSON.Geometry> | string;
+
 
 export default /*#__PURE__*/ defineComponent({
 	name : 'MglGeoJsonSource',
@@ -31,7 +33,7 @@ export default /*#__PURE__*/ defineComponent({
 			type    : String as PropType<string>,
 			required: true
 		},
-		data             : [ Object, String ] as PropType<GeoJSON.Feature<GeoJSON.Geometry> | GeoJSON.FeatureCollection<GeoJSON.Geometry> | string>,
+		data             : [ Object, String ] as PropType<DataType>,
 		maxzoom          : Number as PropType<number>,
 		attribution      : String as PropType<string>,
 		buffer           : Number as PropType<number>,
@@ -58,7 +60,9 @@ export default /*#__PURE__*/ defineComponent({
 
 		useSource<GeoJSONSourceOptions>(source, props, 'geojson', sourceOpts, registry);
 
-		watch(toRef(props, 'data'), v => source.value?.setData(v || { type: 'FeatureCollection', features: [] }));
+		watch(isRef(props.data) ? props.data : () => props.data, v => {
+			source.value?.setData(v as DataType || { type: 'FeatureCollection', features: [] });
+		}, { immediate: true });
 
 		return () => [
 			createCommentVNode('GeoJSON Source'),

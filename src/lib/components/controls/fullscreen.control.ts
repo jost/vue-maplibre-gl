@@ -1,5 +1,5 @@
-import { defineComponent, inject, nextTick, onBeforeUnmount, PropType, toRef } from 'vue';
-import { Position, PositionProp, PositionValues } from '@/lib/components/controls/position.enum';
+import { defineComponent, inject, nextTick, onBeforeUnmount, type PropType } from 'vue';
+import { Position, type PositionProp, PositionValues } from '@/lib/components/controls/position.enum';
 import { isInitializedSymbol, mapSymbol } from '@/lib/types';
 import { FullscreenControl } from 'maplibre-gl';
 import { usePositionWatcher } from '@/lib/composable/usePositionWatcher';
@@ -33,7 +33,7 @@ export default /*#__PURE__*/ defineComponent({
 		control.on('fullscreenstart', triggerResize);
 		control.on('fullscreenend', triggerResize);
 
-		usePositionWatcher(toRef(props, 'position'), map, control);
+		usePositionWatcher(() => props.position, map, control);
 		onBeforeUnmount(() => {
 			control.off('fullscreenstart', triggerResize);
 			control.off('fullscreenend', triggerResize);
